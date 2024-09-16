@@ -100,6 +100,13 @@ $requirements = array(
         'by' => 'All DB-related classes',
         'memo' => 'Required for PostgreSQL database.',
     ),
+    array(
+        'name' => 'PDO Oracle extension',
+        'mandatory' => false,
+        'condition' => extension_loaded('pdo_oci'),
+        'by' => 'All DB-related classes',
+        'memo' => 'Required for Oracle database.',
+    ),
     // Cache :
     array(
         'name' => 'Memcache extension',

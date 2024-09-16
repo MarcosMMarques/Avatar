@@ -86,3 +86,32 @@ a.desc:after {
 .form-group {
     margin-bottom: 1rem;
 }
+
+
+
+/* Alterando o estilo geral da paginação */
+.pagination {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilo para os links de paginação */
+.page-link {
+    color: #4CAF50;  /* Muda a cor do texto */
+    background-color: #fff;  /* Cor de fundo dos links */
+    border: 1px solid #ddd;  /* Borda ao redor dos botões */
+}
+
+/* Estilo para o botão de paginação ativo */
+.page-item.active .page-link {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+/* Estilo para o botão de página no hover */
+.page-link:hover {
+    background-color: #ddd;
+    border-color: #4CAF50;
+}

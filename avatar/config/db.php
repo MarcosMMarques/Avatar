@@ -2,13 +2,8 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8',
-
-    // Schema cache options (for production environment)
-    //'enableSchemaCache' => true,
-    //'schemaCacheDuration' => 60,
-    //'schemaCache' => 'cache',
+    'dsn' => 'oci:dbname=//localhost:1521/orcl',  // Exemplo de DSN para Oracle
+    'username' => 'C##MARCOS',
+    'password' => 'admin',
+    'charset' => 'AL32UTF8',  // Charset comum para Oracle
 ];
