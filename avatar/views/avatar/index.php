@@ -44,6 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
                  }
             ],
         ],
+        'pager' => [
+            'class' => 'yii\widgets\LinkPager',
+            'options' => ['class' => 'pagination custom-pagination'],  
+            'linkOptions' => ['class' => 'page-link'],  
+            'activePageCssClass' => 'active',  
+            'disabledPageCssClass' => 'disabled',  
+        ],
     ]); ?>
 
 

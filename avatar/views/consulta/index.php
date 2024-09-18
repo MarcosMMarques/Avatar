@@ -69,10 +69,10 @@ $this->params['breadcrumbs'][] = $this->title;
     ],
     'pager' => [
         'class' => 'yii\widgets\LinkPager',
-        'options' => ['class' => 'pagination custom-pagination'],  // Classes CSS personalizadas
-        'linkOptions' => ['class' => 'page-link'],  // Estilo dos links
-        'activePageCssClass' => 'active',  // Classe CSS para a página ativa
-        'disabledPageCssClass' => 'disabled',  // Classe CSS para páginas desabilitadas
+        'options' => ['class' => 'pagination custom-pagination'],  
+        'linkOptions' => ['class' => 'page-link'],  
+        'activePageCssClass' => 'active',  
+        'disabledPageCssClass' => 'disabled',  
     ],
     ]); ?>
 
