@@ -5,25 +5,13 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Avatar $model */
 
-$this->title = 'Criar Contâiner Residência';
-$this->params['breadcrumbs'][] = ['label' => 'Contâiners', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = "Criar Contâiner Residência";
+$this->params["breadcrumbs"][] = ["label" => "Contâiners", "url" => ["index"]];
+$this->params["breadcrumbs"][] = $this->title;
 ?>
 <div class="residencia-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <?php if (Yii::$app->session->hasFlash('success')): ?>
-        <div class="alert alert-success">
-            <?= Yii::$app->session->getFlash('success') ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (Yii::$app->session->hasFlash('error')): ?>
-        <div class="alert alert-danger">
-            <?= Yii::$app->session->getFlash('error') ?>
-        </div>
-    <?php endif; ?>
 
     <div class="residencia-form">
         <form method="post" action="index.php?r=container/create-residencia">
@@ -44,8 +32,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 <select class="form-control" id="colonia" name="colonia" required>
                     <option value="">Selecione uma Colonia</option>
                     <?php foreach ($colonias as $colonia): ?>
-                        <option value="<?= Html::encode($colonia['NOME'] . '+' . $colonia['UNIDADE']) ?>">
-                            <?= Html::encode('Nome: ' . $colonia['NOME'] . ', Unidade: ' . $colonia['UNIDADE']) ?>
+                        <option value="<?= Html::encode(
+                            $colonia["NOME"] . "+" . $colonia["UNIDADE"]
+                        ) ?>">
+                            <?= Html::encode(
+                                "Nome: " .
+                                    $colonia["NOME"] .
+                                    ", Unidade: " .
+                                    $colonia["UNIDADE"]
+                            ) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

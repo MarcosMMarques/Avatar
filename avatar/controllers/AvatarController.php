@@ -64,8 +64,8 @@ class AvatarController extends Controller
                 "sort" => [
                     "attributes" => [
                         "CODIGO",
-                        "NOME",
-                        "CODIGONAVI",
+                        "AVATAR_NOME",
+                        "NAVI_NOME",
                         "CODIGOHUMANO",
                     ],
                     "defaultOrder" => [
@@ -93,7 +93,11 @@ class AvatarController extends Controller
         try {
             $pdo = new PDO($this->dsn, $this->username, $this->password);
 
-            $sql = "SELECT * FROM P3_AVATAR WHERE CODIGO = :codigo";
+            $sql = "SELECT A.CODIGO, A.NOME AS AVATAR_NOME, A.CODIGONAVI,
+                A.CODIGOHUMANO, N.NOME AS NAVI_NOME, N.ALTURA,
+                N.TAMCAUDA FROM P3_AVATAR A JOIN P3_NAVI N ON
+                A.CODIGONAVI = N.CODIGOSER WHERE A.CODIGO = :codigo";
+
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(":codigo", $codigo);
             $stmt->execute();
@@ -125,17 +129,15 @@ class AvatarController extends Controller
         $pdo = new PDO($this->dsn, $this->username, $this->password);
 
         if (Yii::$app->request->isPost) {
-            $codigo = Yii::$app->request->post("codigo");
             $nome = Yii::$app->request->post("nome");
             $codigoNavi = Yii::$app->request->post("codigoNavi");
             $codigoHumano = Yii::$app->request->post("codigoHumano");
 
             try {
                 $sql =
-                    "INSERT INTO P3_AVATAR (CODIGO, NOME, CODIGONAVI, CODIGOHUMANO) VALUES (:codigo, :nome, :codigoNavi, :codigoHumano)";
+                    "INSERT INTO P3_AVATAR (CODIGO, NOME, CODIGONAVI, CODIGOHUMANO) VALUES (P3_AVATAR_SEQ.NEXTVAL, :nome, :codigoNavi, :codigoHumano)";
                 $stmt = $pdo->prepare($sql);
 
-                $stmt->bindParam(":codigo", $codigo);
                 $stmt->bindParam(":nome", $nome);
                 $stmt->bindParam(":codigoNavi", $codigoNavi);
                 $stmt->bindParam(":codigoHumano", $codigoHumano);

@@ -146,6 +146,21 @@ class ContainerController extends Controller
                 );
                 return $this->redirect(["index"]);
             }
+            $sql =
+                "SELECT COUNT(*) FROM P3_CONTAINERCONTROLE WHERE NOME = :nomecon AND SIGLA = :siglacon";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":nomecon", $nomecon);
+            $stmt->bindParam(":siglacon", $siglacon);
+            $stmt->execute();
+
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                Yii::$app->session->setFlash(
+                    "error",
+                    "Este contêiner já existe."
+                );
+                return $this->redirect(["create-residencia"]);
+            }
             $colonia = explode("+", Yii::$app->request->post("colonia"));
             $nomecol = $colonia[0];
             $unidadecol = $colonia[1];
@@ -216,6 +231,7 @@ class ContainerController extends Controller
     public function actionCreateDeposito()
     {
         $pdo = new PDO($this->dsn, $this->username, $this->password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         if (Yii::$app->request->isPost) {
             $nomecon = Yii::$app->request->post("nomecon");
@@ -226,6 +242,21 @@ class ContainerController extends Controller
                     "A sigla contém caracteres inválidos."
                 );
                 return $this->redirect(["index"]);
+            }
+            $sql =
+                "SELECT COUNT(*) FROM P3_CONTAINERCONTROLE WHERE NOME = :nomecon AND SIGLA = :siglacon";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":nomecon", $nomecon);
+            $stmt->bindParam(":siglacon", $siglacon);
+            $stmt->execute();
+
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                Yii::$app->session->setFlash(
+                    "error",
+                    "Este contêiner já existe."
+                );
+                return $this->redirect(["create-deposito"]);
             }
             $colonia = explode("+", Yii::$app->request->post("colonia"));
             $nomecol = $colonia[0];
@@ -270,7 +301,7 @@ class ContainerController extends Controller
                     "error",
                     "Erro ao criar depósito: " . $e->getMessage()
                 );
-                return $this->redirect(["create-residencia"]);
+                return $this->redirect(["create-deposito"]);
             }
         }
 
@@ -305,6 +336,21 @@ class ContainerController extends Controller
                     "A sigla contém caracteres inválidos."
                 );
                 return $this->redirect(["index"]);
+            }
+            $sql =
+                "SELECT COUNT(*) FROM P3_CONTAINERCONTROLE WHERE NOME = :nomecon AND SIGLA = :siglacon";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":nomecon", $nomecon);
+            $stmt->bindParam(":siglacon", $siglacon);
+            $stmt->execute();
+
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                Yii::$app->session->setFlash(
+                    "error",
+                    "Este contêiner já existe."
+                );
+                return $this->redirect(["create-laboratorio"]);
             }
             $colonia = explode("+", Yii::$app->request->post("colonia"));
             $nomecol = $colonia[0];
