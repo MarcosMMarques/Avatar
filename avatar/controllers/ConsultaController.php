@@ -15,20 +15,19 @@ use Yii;
 class ConsultaController extends Controller
 {
     public $enableCsrfValidation = false;
-
+    public $dsn = "oci:dbname=//200.131.242.43:1521/IFNMGPDB;charset=AL32UTF8";
+    public $username = "mdmm31662";
+    public $password = "BbP1fFYS1nIzNoLH8Fxt";
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                ],
-            ]
-        );
+        return array_merge(parent::behaviors(), [
+            "verbs" => [
+                "class" => VerbFilter::className(),
+            ],
+        ]);
     }
     /**
      * Lists all Avatar models.
@@ -37,15 +36,10 @@ class ConsultaController extends Controller
      */
     public function actionIndex()
     {
-
-        $dsn = 'oci:dbname=//localhost:1521/orcl';  
-        $username = 'C##MARCOS';
-        $password = 'admin';
-
         try {
-            $pdo = new PDO($dsn, $username, $password);
+            $pdo = new PDO($this->dsn, $this->username, $this->password);
 
-            $stmt = $pdo->prepare("SELECT 
+            $stmt = $pdo->prepare("SELECT
                 -- Dados da colônia
                 c.Unidade AS Colonia_Unidade,
                 c.Nome AS Colonia_Nome,
@@ -83,8 +77,8 @@ class ConsultaController extends Controller
                 m.Modelo AS Maquinario_Modelo,
                 m.PesoOperacional AS Maquinario_Peso,
                 m.Potencia AS Maquinario_Potencia
-    
-                FROM 
+
+                FROM
                    p3_Colonia c
                    LEFT JOIN p3_Empresa e ON c.RegistroEmpresa = e.Registro -- Colônia associada a empresa
                    LEFT JOIN P3_TRABALHADOR t ON t.UNIDADECOL = c.UNIDADE AND t.NOMECOL = c.NOME  -- Trabalhadores confinados na colônia
@@ -109,23 +103,22 @@ class ConsultaController extends Controller
             $stmt->execute();
 
             $consulta = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             $dataProvider = new ArrayDataProvider([
-                'allModels' => $consulta,
-                'sort' => [
-                    'attributes' => ['Colonia_Unidade'],
-                    'defaultOrder' => [
-                        'Colonia_Unidade' => SORT_ASC,  
+                "allModels" => $consulta,
+                "sort" => [
+                    "attributes" => ["Colonia_Unidade"],
+                    "defaultOrder" => [
+                        "Colonia_Unidade" => SORT_ASC,
                     ],
                 ],
             ]);
 
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
+            return $this->render("index", [
+                "dataProvider" => $dataProvider,
             ]);
-
         } catch (PDOException $e) {
-            return 'Erro: ' . $e->getMessage();
+            return "Erro: " . $e->getMessage();
         }
     }
 }

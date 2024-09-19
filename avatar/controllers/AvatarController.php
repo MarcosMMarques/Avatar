@@ -15,23 +15,23 @@ use PDO;
 class AvatarController extends Controller
 {
     public $enableCsrfValidation = false;
+    public $dsn = "oci:dbname=//200.131.242.43:1521/IFNMGPDB;charset=AL32UTF8";
+    public $username = "mdmm31662";
+    public $password = "BbP1fFYS1nIzNoLH8Fxt";
 
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+        return array_merge(parent::behaviors(), [
+            "verbs" => [
+                "class" => VerbFilter::className(),
+                "actions" => [
+                    "delete" => ["POST"],
                 ],
-            ]
-        );
+            ],
+        ]);
     }
 
     /**
@@ -41,22 +41,17 @@ class AvatarController extends Controller
      */
     public function actionIndex()
     {
-
-        $dsn = 'oci:dbname=//localhost:1521/orcl';  
-        $username = 'C##MARCOS';
-        $password = 'admin';
-
         try {
-            $pdo = new PDO($dsn, $username, $password);
+            $pdo = new PDO($this->dsn, $this->username, $this->password);
 
             $stmt = $pdo->prepare("
-                SELECT 
-                    P3_AVATAR.CODIGO AS CODIGO, 
-                    P3_AVATAR.NOME AS AVATAR_NOME, 
-                    P3_NAVI.NOME AS NAVI_NOME, 
+                SELECT
+                    P3_AVATAR.CODIGO AS CODIGO,
+                    P3_AVATAR.NOME AS AVATAR_NOME,
+                    P3_NAVI.NOME AS NAVI_NOME,
                     P3_AVATAR.CODIGOHUMANO,
                     P3_NAVI.CODIGOSER
-                FROM P3_AVATAR 
+                FROM P3_AVATAR
                 LEFT JOIN P3_NAVI ON P3_NAVI.CODIGOSER = P3_AVATAR.CODIGONAVI
             ");
             $stmt->execute();
@@ -65,21 +60,25 @@ class AvatarController extends Controller
             Yii::Debug($avatars);
 
             $dataProvider = new ArrayDataProvider([
-                'allModels' => $avatars,  
-                'sort' => [
-                    'attributes' => ['CODIGO', 'NOME', 'CODIGONAVI', 'CODIGOHUMANO'],  
-                    'defaultOrder' => [
-                        'CODIGO' => SORT_ASC,  
+                "allModels" => $avatars,
+                "sort" => [
+                    "attributes" => [
+                        "CODIGO",
+                        "NOME",
+                        "CODIGONAVI",
+                        "CODIGOHUMANO",
+                    ],
+                    "defaultOrder" => [
+                        "CODIGO" => SORT_ASC,
                     ],
                 ],
             ]);
 
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
+            return $this->render("index", [
+                "dataProvider" => $dataProvider,
             ]);
-
         } catch (PDOException $e) {
-            return 'Erro: ' . $e->getMessage();
+            return "Erro: " . $e->getMessage();
         }
     }
 
@@ -91,29 +90,28 @@ class AvatarController extends Controller
      */
     public function actionView($codigo)
     {
-        $dsn = 'oci:dbname=//localhost:1521/orcl';
-        $username = 'C##MARCOS';
-        $password = 'admin';
-
         try {
-            $pdo = new PDO($dsn, $username, $password);
+            $pdo = new PDO($this->dsn, $this->username, $this->password);
 
             $sql = "SELECT * FROM P3_AVATAR WHERE CODIGO = :codigo";
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':codigo', $codigo);
+            $stmt->bindParam(":codigo", $codigo);
             $stmt->execute();
             $avatar = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$avatar) {
-                Yii::$app->session->setFlash('error', 'Avatar não encontrado.');
-                return $this->redirect(['index']);
+                Yii::$app->session->setFlash("error", "Avatar não encontrado.");
+                return $this->redirect(["index"]);
             }
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao visualizar avatar: ' . $e->getMessage());
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao visualizar avatar: " . $e->getMessage()
+            );
         }
 
-        return $this->render('view', [
-            'avatar' => $avatar,
+        return $this->render("view", [
+            "avatar" => $avatar,
         ]);
     }
 
@@ -124,34 +122,36 @@ class AvatarController extends Controller
      */
     public function actionCreate()
     {
-        $dsn = 'oci:dbname=//localhost:1521/orcl';  
-        $username = 'C##MARCOS';
-        $password = 'admin';
-        $pdo = new PDO($dsn, $username, $password);
+        $pdo = new PDO($this->dsn, $this->username, $this->password);
 
         if (Yii::$app->request->isPost) {
-            $codigo = Yii::$app->request->post('codigo');
-            $nome = Yii::$app->request->post('nome');
-            $codigoNavi = Yii::$app->request->post('codigoNavi');
-            $codigoHumano = Yii::$app->request->post('codigoHumano');
+            $codigo = Yii::$app->request->post("codigo");
+            $nome = Yii::$app->request->post("nome");
+            $codigoNavi = Yii::$app->request->post("codigoNavi");
+            $codigoHumano = Yii::$app->request->post("codigoHumano");
 
             try {
-
-                $sql = "INSERT INTO P3_AVATAR (CODIGO, NOME, CODIGONAVI, CODIGOHUMANO) VALUES (:codigo, :nome, :codigoNavi, :codigoHumano)";
+                $sql =
+                    "INSERT INTO P3_AVATAR (CODIGO, NOME, CODIGONAVI, CODIGOHUMANO) VALUES (:codigo, :nome, :codigoNavi, :codigoHumano)";
                 $stmt = $pdo->prepare($sql);
 
-                $stmt->bindParam(':codigo', $codigo);
-                $stmt->bindParam(':nome', $nome);
-                $stmt->bindParam(':codigoNavi', $codigoNavi);
-                $stmt->bindParam(':codigoHumano', $codigoHumano);
+                $stmt->bindParam(":codigo", $codigo);
+                $stmt->bindParam(":nome", $nome);
+                $stmt->bindParam(":codigoNavi", $codigoNavi);
+                $stmt->bindParam(":codigoHumano", $codigoHumano);
 
                 $stmt->execute();
 
-                Yii::$app->session->setFlash('success', 'Avatar criado com sucesso!');
-                return $this->redirect(['index']);
-
+                Yii::$app->session->setFlash(
+                    "success",
+                    "Avatar criado com sucesso!"
+                );
+                return $this->redirect(["index"]);
             } catch (PDOException $e) {
-                Yii::$app->session->setFlash('error', 'Erro ao criar avatar: ' . $e->getMessage());
+                Yii::$app->session->setFlash(
+                    "error",
+                    "Erro ao criar avatar: " . $e->getMessage()
+                );
             }
         }
 
@@ -160,10 +160,12 @@ class AvatarController extends Controller
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $navis = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao buscar Navis: ' . $e->getMessage());
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao buscar Navis: " . $e->getMessage()
+            );
+            return $this->redirect(["index"]);
         }
 
         try {
@@ -171,15 +173,17 @@ class AvatarController extends Controller
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $humanos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao buscar Humanos: ' . $e->getMessage());
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao buscar Humanos: " . $e->getMessage()
+            );
+            return $this->redirect(["index"]);
         }
 
-        return $this->render('create', [
-            'navis' => $navis,
-            'humanos' => $humanos,
+        return $this->render("create", [
+            "navis" => $navis,
+            "humanos" => $humanos,
         ]);
     }
 
@@ -192,46 +196,48 @@ class AvatarController extends Controller
      */
     public function actionUpdate($codigo)
     {
-        $dsn = 'oci:dbname=//localhost:1521/orcl';
-        $username = 'C##MARCOS';
-        $password = 'admin';
-
         try {
-            $pdo = new PDO($dsn, $username, $password);
+            $pdo = new PDO($this->dsn, $this->username, $this->password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $sql = "SELECT * FROM P3_AVATAR WHERE CODIGO = :codigo";
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':codigo', $codigo);
+            $stmt->bindParam(":codigo", $codigo);
             $stmt->execute();
             $avatar = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$avatar) {
-                Yii::$app->session->setFlash('error', 'Avatar não encontrado.');
-                return $this->redirect(['index']);
+                Yii::$app->session->setFlash("error", "Avatar não encontrado.");
+                return $this->redirect(["index"]);
             }
 
             if (Yii::$app->request->isPost) {
-                $nome = Yii::$app->request->post('nome');
-                $codigoNavi = Yii::$app->request->post('codigoNavi');
-                $codigoHumano = Yii::$app->request->post('codigoHumano');
+                $nome = Yii::$app->request->post("nome");
+                $codigoNavi = Yii::$app->request->post("codigoNavi");
+                $codigoHumano = Yii::$app->request->post("codigoHumano");
 
-                $sql = "UPDATE P3_AVATAR SET NOME = :nome, CODIGONAVI = :codigoNavi, CODIGOHUMANO = :codigoHumano WHERE CODIGO = :codigo";
+                $sql =
+                    "UPDATE P3_AVATAR SET NOME = :nome, CODIGONAVI = :codigoNavi, CODIGOHUMANO = :codigoHumano WHERE CODIGO = :codigo";
                 $stmt = $pdo->prepare($sql);
 
-                $stmt->bindParam(':nome', $nome);
-                $stmt->bindParam(':codigoNavi', $codigoNavi);
-                $stmt->bindParam(':codigoHumano', $codigoHumano);
-                $stmt->bindParam(':codigo', $codigo);  
+                $stmt->bindParam(":nome", $nome);
+                $stmt->bindParam(":codigoNavi", $codigoNavi);
+                $stmt->bindParam(":codigoHumano", $codigoHumano);
+                $stmt->bindParam(":codigo", $codigo);
 
                 $stmt->execute();
 
-                Yii::$app->session->setFlash('success', 'Avatar atualizado com sucesso!');
-                return $this->redirect(['index']);
+                Yii::$app->session->setFlash(
+                    "success",
+                    "Avatar atualizado com sucesso!"
+                );
+                return $this->redirect(["index"]);
             }
-
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao atualizar avatar: ' . $e->getMessage());
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao atualizar avatar: " . $e->getMessage()
+            );
         }
 
         try {
@@ -239,10 +245,12 @@ class AvatarController extends Controller
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $navis = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao buscar Navis: ' . $e->getMessage());
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao buscar Navis: " . $e->getMessage()
+            );
+            return $this->redirect(["index"]);
         }
 
         try {
@@ -250,16 +258,18 @@ class AvatarController extends Controller
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $humanos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao buscar Humanos: ' . $e->getMessage());
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao buscar Humanos: " . $e->getMessage()
+            );
+            return $this->redirect(["index"]);
         }
 
-        return $this->render('update', [
-            'avatar' => $avatar,
-            'navis' => $navis,
-            'humanos' => $humanos,
+        return $this->render("update", [
+            "avatar" => $avatar,
+            "navis" => $navis,
+            "humanos" => $humanos,
         ]);
     }
 
@@ -272,21 +282,20 @@ class AvatarController extends Controller
      */
     public function actionDelete($codigo)
     {
-        $dsn = 'oci:dbname=//localhost:1521/orcl';
-        $username = 'C##MARCOS';
-        $password = 'admin';
-
         try {
-            $pdo = new PDO($dsn, $username, $password);
+            $pdo = new PDO($this->dsn, $this->username, $this->password);
 
             $sql = "DELETE FROM P3_AVATAR WHERE CODIGO = :codigo";
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':codigo', $codigo);
+            $stmt->bindParam(":codigo", $codigo);
             $stmt->execute();
         } catch (PDOException $e) {
-            Yii::$app->session->setFlash('error', 'Erro ao visualizar avatar: ' . $e->getMessage());
+            Yii::$app->session->setFlash(
+                "error",
+                "Erro ao visualizar avatar: " . $e->getMessage()
+            );
         }
 
-        return $this->redirect(['index']);
+        return $this->redirect(["index"]);
     }
 }
